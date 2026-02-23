@@ -732,21 +732,24 @@
       height: auto;
     }
     .nav-logo { margin-bottom: 0; }
-    .nav-logo img { height: 60px !important; }
+    .nav-logo img { height: 80px !important; }
     .nav-bottom { display: none; } /* hide desktop link row */
     .hamburger { display: flex; }
 
     /* ── MOBILE MENU ── */
-    .mobile-menu { padding: 90px 8% 4rem; }
+    .mobile-menu { padding: 100px 8% 4rem; }
 
     /* ── HERO ── */
-    .hero { grid-template-columns: 1fr; padding-top: 100px; gap: 2rem; }
+    .hero { grid-template-columns: 1fr; padding-top: 110px; gap: 2rem; }
     .hero-visual { display: none; }
     .hero h1 { font-size: clamp(2.2rem, 9vw, 3.5rem); }
     .hero-tagline { font-size: 1.3rem; }
 
     /* ── PAGE SECTIONS ── override inline padding-top ── */
-    .page-section[style] { padding-top: 90px !important; }
+    .page-section[style] { padding-top: 100px !important; }
+
+    /* ── SECTION VERTICAL PADDING ── */
+    .section { padding: 3rem 5% !important; }
 
     /* ── LAYOUTS ── */
     .about-grid, .telehealth-split, .contact-page-grid { grid-template-columns: 1fr; }
@@ -754,13 +757,10 @@
     .new-patients-grid, .insurance-grid, .referral-contacts { grid-template-columns: 1fr; }
     .schedule-card { grid-template-columns: 1fr; gap: 2rem; }
 
-    /* ── SECTION PADDING ── */
-    .section-inner, [class*="section"] { padding-left: 5%; padding-right: 5%; }
-
     /* ── FOOTER ── */
     .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
     .footer-bottom { flex-direction: column; gap: .5rem; text-align: center; }
-    .footer-brand img { height: 80px !important; }
+    .footer-brand img { height: 90px !important; }
 
     /* ── TYPOGRAPHY ── */
     h1 { font-size: clamp(2rem, 8vw, 3rem); }
@@ -770,14 +770,16 @@
     /* ── MISC ── */
     .floating-badge { display: none; }
     .hero-card { margin: 0 auto; max-width: 360px; }
+    .section-header { margin-bottom: 2rem; }
   }
 
   @media (max-width: 480px) {
     nav { padding: .5rem 4%; }
-    .hero { padding-top: 90px; }
-    .page-section[style] { padding-top: 80px !important; }
-    .mobile-menu { padding: 80px 6% 3rem; }
-    .section-inner, [class*="section"] { padding-left: 4%; padding-right: 4%; }
+    .nav-logo img { height: 70px !important; }
+    .hero { padding-top: 100px; }
+    .page-section[style] { padding-top: 90px !important; }
+    .mobile-menu { padding: 90px 6% 3rem; }
+    .section { padding: 2.5rem 4% !important; }
   }
 </style>
 </head>
@@ -1628,9 +1630,50 @@
   function closeMobile() { mobileMenu.classList.remove('open'); }
 
   // ─── PAGE ROUTING ───
+  const pages = document.querySelectorAll('.page-section');
+
   function showPage(id) {
-    // Handle special case for schedule section
+    // For schedule-section, show home and scroll to it
     if (id === 'schedule-section') {
       showPage('home');
       setTimeout(() => {
-        const el = doc
+        const el = document.getElementById('schedule-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
+      return;
+    }
+
+    // Hide all sections
+    pages.forEach(p => p.classList.remove('active'));
+
+    // Show the requested section
+    const target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+    } else {
+      // Fallback to home if id not found
+      document.getElementById('home').classList.add('active');
+    }
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Update active nav link
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.classList.remove('active-link');
+    });
+  }
+
+  // ─── FAQ ACCORDION ───
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+</script>
+</body>
+</html>
